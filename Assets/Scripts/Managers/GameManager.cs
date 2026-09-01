@@ -2,6 +2,7 @@ using UnityEngine;
 using Unity.Netcode; // namespace pour utiliser Netcode
 using UnityEngine.SceneManagement; // namespace pour la gestion des scènes
 
+[RequireComponent(typeof(NetworkObject))]
 public class GameManager : NetworkBehaviour //pour un network object
 {
     public static GameManager instance;// Singleton pour parler au GameManager de n'importe où
