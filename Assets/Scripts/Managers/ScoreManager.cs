@@ -11,7 +11,11 @@ public class ScoreManager : NetworkBehaviour // ne pas oublier component network
     [SerializeField] private int pointageCible; // Le pointage à atteindre pour gagner (servira plus tard)
     private NetworkVariable<int> scoreHote = new NetworkVariable<int>(); // Score de l'hôte (variable réseau)
     private NetworkVariable<int> scoreClient = new NetworkVariable<int>(); // Score du client (variable réseau)
-                                                                           // Création du singleton
+
+    public GameObject pannelVictoire; // Référence au panel pour la victoire
+    public GameObject pannelDefaite; // Référence au panel pour la défaite
+
+    // Création du singleton
     private void Awake()
     {
         if (instance == null)
@@ -47,17 +51,23 @@ public class ScoreManager : NetworkBehaviour // ne pas oublier component network
     }
     /* Fonction pour augmenter le score de l'hôte
     - On incrémente le score de l'hôte
-    - On vérifie si la partie est terminée*/
+    - On vérifie si la partie est terminée
+    - Fonction serveur uniquement, appelée par BalleRigid
+     */
     public void AugmenteScoreHote() // Fonction public. À implémenter La balle doit appeler cette fonction lorsqu'un but est compté par l'hôte
     {
         scoreHote.Value++;
+        VerifieFinPartie();
     }
     /* Fonction pour augmenter le score du client
     - On incrémente le score du client
-    - On vérifie si la partie est terminée*/
+    - On vérifie si la partie est terminée
+    - Fonction serveur uniquement, appelée par BalleRigid
+     */
     public void AugmenteScoreClient() // Fonction public. À implémenter La balle doit appeler cette fonction lorsqu'un but est compté par le client
     {
         scoreClient.Value++;
+        VerifieFinPartie();
     }
     // Méthode pour gérer le changement de valeur du score de l'hôte
     // Elle est appelée automatiquement à chaque fois que le score de l'hôte change
@@ -74,5 +84,51 @@ public class ScoreManager : NetworkBehaviour // ne pas oublier component network
     {
         if (ancienScoreClient == nouveauScoreClient) return; // Évite de mettre à jour si le score n'a pas changé
         scoreTxt.text = scoreHote.Value + " - " + scoreClient.Value;
+    }
+
+    /* Fonction pour vérifier si la partie est terminée
+- Si le score de l'hôte ou du client atteint le pointage cible, on affiche le panel de victoire ou de défaite
+- On appelle la fonction GagnantHote_ClientRpc ou GagnantClient_ClientRpc selon le cas
+- On appelle la fonction FinPartie du GameManager pour terminer la partie */
+    void VerifieFinPartie()
+    {
+        if (scoreHote.Value >= pointageCible)
+        {
+            GagnantHoteRpc();
+            GameManager.instance.FinPartie();
+        }
+        else if (scoreClient.Value >= pointageCible)
+        {
+            GagnantClientRpc();
+            GameManager.instance.FinPartie();
+        }
+    }
+    /* Fonction RPC pour afficher le panel de victoire pour l'hôte et le panel de défaite pour le client
+    - Appelée par le serveur pour tous les clients */
+    [Rpc(SendTo.Everyone)]
+    private void GagnantHoteRpc()
+    {
+        if (IsServer)
+        {
+            pannelVictoire.SetActive(true);
+        }
+        else
+        {
+            pannelDefaite.SetActive(true);
+        }
+    }
+    /* Fonction RPC pour afficher le panel de victoire pour le client et le panel de défaite pour l'hôte
+    - Appelée par le serveur pour tous les clients */
+    [Rpc(SendTo.Everyone)]
+    private void GagnantClientRpc()
+    {
+        if (IsServer)
+        {
+            pannelDefaite.SetActive(true);
+        }
+        else
+        {
+            pannelVictoire.SetActive(true);
+        }
     }
 }
