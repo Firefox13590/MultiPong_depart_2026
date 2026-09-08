@@ -88,5 +88,45 @@ public class BalleRigid : NetworkBehaviour // objet réseau
 
         GetComponent<Rigidbody>().AddForce(aleaX, 0, aleaZ, ForceMode.Impulse);
     }
+
+    /* Attention ne fonctionne pas sur le client. À utiliser seulement si détection OK seulement sur le serveur
+      Fonction qui calcule le nombre de bonds de la balle et qui augmente la vitesse de cette dernière à chaque
+      5 bonds.
+      On appele aussi la fonction Shake du script camShaker pour faire bouger la caméra lorsque la balle frappe un mur
+      ou une barre. Utilisation d'un RPC pour que tous les clients voient le shake de la caméra.
+      */
+    private void OnCollisionEnter(Collision infoCollisions)
+    {
+        if (!IsServer) return;
+        {
+
+        }
+        if (infoCollisions.gameObject.tag == "Barre")
+        {
+            nombreDeBonds++;
+
+            if (nombreDeBonds >= 5)
+            {
+                Vector3 velociteActuelle = GetComponent<Rigidbody>().linearVelocity;
+                GetComponent<Rigidbody>().AddForce(velociteActuelle * 5f, ForceMode.Force);
+                nombreDeBonds = 0;
+            }
+        }
+
+        if (infoCollisions.gameObject.tag == "Barre" || infoCollisions.gameObject.tag == "Murs") Shake_Rpc();
+    }
+
+    /* Ajout d'une variable à défénir dans l'inspecteur en glissant la MainCamera ou l'objet qui possède le script CamShaker
+       Vous pouvez mettre cette ligne plus haut avec les autres variables déclarées */
+    public CamShaker camShaker;
+
+    /* Fonction RPC pour faire bouger la caméra
+    - Appelée par le serveur pour tous les clients */
+    [Rpc(SendTo.Everyone)]
+    private void Shake_Rpc()
+    {
+        if (camShaker == null) return;
+        camShaker.Shake(0.2f, 0.2f, 20f);
+    }
 }
 

@@ -80,6 +80,7 @@ MonoBehaviour:
   ShowTopMostFoldoutHeaderGroup: 1
   nombreDeBonds: 0
   maxSpeed: 69
+  camShaker: {fileID: 0}
 --- !u!114 &7774726756464333458
 MonoBehaviour:
   m_ObjectHideFlags: 0

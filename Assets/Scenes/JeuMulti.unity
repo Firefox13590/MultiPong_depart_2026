@@ -131,6 +131,7 @@ GameObject:
   - component: {fileID: 138154890}
   - component: {fileID: 138154889}
   - component: {fileID: 138154888}
+  - component: {fileID: 138154892}
   m_Layer: 0
   m_Name: Camera
   m_TagString: MainCamera
@@ -256,6 +257,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
+--- !u!114 &138154892
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 138154887}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3b6a73fe893d2124585fcffe25a5a931, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CamShaker
 --- !u!1 &841740826
 GameObject:
   m_ObjectHideFlags: 0
@@ -1573,6 +1586,10 @@ PrefabInstance:
       propertyPath: GlobalObjectIdHash
       value: 216525997
       objectReference: {fileID: 0}
+    - target: {fileID: 7509093529609898162, guid: dbc24ee47f825a44983aa59c9c03e42d, type: 3}
+      propertyPath: camShaker
+      value: 
+      objectReference: {fileID: 138154892}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
